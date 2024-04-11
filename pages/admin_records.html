@@ -1,0 +1,107 @@
+
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>Admin Page</title>
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+        <link rel="stylesheet" href="https://cdn.datatables.net/1.10.23/css/jquery.dataTables.min.css"> 
+    </head>
+    <body>
+
+        <table class="table" id="user_rec">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Name</th>
+                    <th>Mobile No.</th>
+                    <th>E-Mail Address</th>
+                    <th>City</th>
+                    <th>User Role</th>
+                    <th>EDIT</th>
+                </tr>
+            </thead>
+            <tbody id="table_1_user">
+
+            </tbody>
+        </table>
+
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+        <script type="text/javascript" src="https://code.jquery.com/jquery-3.5.1.js"></script> 
+        <script src="https://cdn.datatables.net/1.10.23/js/jquery.dataTables.min.js"></script> 
+        <script>
+
+            $(document).ready(function(){
+                $('#user_rec').dataTable({
+                    "ajax": './api/udata.json',
+                    "columns": [
+                        { 'data': 'user_id' },
+                        { 'data': 'userName' },
+                        { 'data': 'mobilenumber' },
+                        { 'data': 'emailAdd' },
+                        { 'data': 'address' },
+                        { 'data': 'userrole' },
+                        { 'data': null,
+                            orderable: false,
+                            "mRender" : function ( data, type, row ) {
+                            return '<a href="./admin_edit.php?user_ID=' + data.user_id + '" class="btn btn-success">EDIT</a>';
+                            }
+                        }
+                    ]
+                });
+                // getAllUserData()
+                // $('#user_rec').dataTable();
+                /* $.ajax({
+                    type: 'GET',
+                    url: './api/udata.json',
+                    contentType: "application/json",
+                    dataType : "json",
+                    success: function (res) {
+
+                        $('#user_rec').DataTable({
+                            column: [
+                                { "data": "user_id" },
+                                { "data": "userName" },
+                                { "data": "mobilenumber" },
+                                { "data": "emailAdd" },
+                                { "data": "address" },
+                                { "data": "userrole" }
+                            ]
+                        });
+                    }
+                }) */
+            });
+
+            function getAllUserData() {
+                var t_body = document.getElementById('table_1_user');
+                $.ajax({
+                    type: 'GET',
+                    url: './api/user_data_api',
+                    contentType: "application/json",
+                    mimeType : "json",
+                    success: function (res) {
+                        $.each(res, function(key, val) {
+                            $(t_body).append(
+                                '<tr>\
+                                    <td>' + val['user_id'] + '</td>\
+                                    <td>' + val['userName'] + '</td>\
+                                    <td>' + val['mobilenumber'] + '</td>\
+                                    <td>' + val['emailAdd'] + '</td>\
+                                    <td>' + val['address'] + '</td>\
+                                    <td>' + val['userrole'] + '</td>\
+                                    <td><button class="btn btn-success"><a href="./admin_edit.php?user_ID=' + val['user_id'] + '" style="color: #fff;text-decoration: none;">EDIT</a></button></td>\
+                                </tr>'
+                            )
+                        })
+                    },
+                    error: function() {
+                        alert('Fail!');
+                    }
+                })
+            }
+
+        </script>
+    </body>
+</html>
